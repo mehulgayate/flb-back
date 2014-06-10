@@ -35,19 +35,35 @@ public class ApiController {
 	}
 
 	@RequestMapping("/api/simple-service")
-	public ModelAndView login(HttpSession httpSession,@RequestParam Long id) throws InterruptedException{
+	public ModelAndView login(HttpSession httpSession,@RequestParam Long id,@RequestParam String uuidf) throws InterruptedException{
 		ModelAndView mv=new ModelAndView("json-string");
-		System.out.println("**************** Request recieved ...Processing.....");
+		
+		Server server =repository.findServerById(id);
+		ServerLoad  serverLoad =repository.findServerLoadByServer(server);
+
 		JSONObject jsonObject=new JSONObject();
-		Thread.currentThread().sleep(15000);
-		callNotify(id);
+		if(server.getRequestCapacity()+server.getCapacityThreshold()<serverLoad.getRequestCount()){
+			System.out.println("**** #### ***** Server overloaded.......");
+			System.out.println("**** #### ***** **** #### ***** Migrating Load.......");
+			jsonObject.put("result", "false");
+			jsonObject.put("migrate", "true");
+			mv.addObject("result", jsonObject);
+			callNotify(id,uuidf);
+			System.out.println("**** #### ***** **** #### ***** **** #### ***** Load Migrated from this server side.......");
+			return mv;
+		}
+		
+		System.out.println("**************** Request recieved ...Processing.....uuid="+uuidf);
+		
+		Thread.currentThread().sleep(repository.getRequestTime());
+		callNotify(id,uuidf);
 		jsonObject.put("result", "true");
 		mv.addObject("result", jsonObject);
 		System.out.println("**************** Request processing complete.....");
 		return mv;
 	}
 
-	private void callNotify(Long id){
+	private void callNotify(Long id,String uuid){
 
 		try {
 
@@ -67,7 +83,7 @@ public class ApiController {
 					new InputStreamReader((response.getEntity().getContent())));
 
 			String output;
-			System.out.println("Output from Server .... \n");
+			System.out.println("Calling notify .... for uuid : "+uuid);
 			while ((output = br.readLine()) != null) {
 				System.out.println(output);
 			}

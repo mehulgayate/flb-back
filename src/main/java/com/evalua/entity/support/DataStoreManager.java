@@ -18,7 +18,7 @@ public class DataStoreManager {
 	}
 
 	private Session getSession(){
-		return sessionFactory.openSession();
+		return sessionFactory.getCurrentSession();
 	}
 
 }

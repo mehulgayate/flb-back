@@ -15,9 +15,6 @@ cd $TOMCAT_BIN2
   ./catalina.sh stop
 
 cd $PROJECT_HOME
-mvn clean
-
-mvn compile war:exploded
 
 if [ ! -L $TOMCAT_WEBAPP2/ROOT ]; then
 cd $TOMCAT_WEBAPP2

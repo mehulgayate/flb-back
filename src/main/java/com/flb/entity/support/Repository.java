@@ -17,6 +17,16 @@ public class Repository {
 	
 	@Resource
 	private SessionFactory sessionFactory;
+	
+	private Integer requestTime;
+
+	public Integer getRequestTime() {
+		return requestTime;
+	}
+
+	public void setRequestTime(Integer requestTime) {
+		this.requestTime = requestTime;
+	}
 
 	public void setSessionFactory(SessionFactory sessionFactory) {
 		this.sessionFactory = sessionFactory;
@@ -30,9 +40,20 @@ public class Repository {
 		return getSession().createQuery("From "+ServerLoad.class.getName()).list();
 	}
 	
+	public List<Server> listAllServer(){
+		return getSession().createQuery("From "+Server.class.getName()).list();
+	}
+	
 	public List<ServerLoad> listMinLoadServers(){
+		getSession().flush();
 		return getSession().createQuery("From "+ServerLoad.class.getName()+" sl where sl.requestCount=(select min(slinnr.requestCount) FROM "+ServerLoad.class.getName()+" slinnr where slinnr.server.status=:status)")
 				.setParameter("status", ServerStatus.ACTIVE).list();
+	}
+	
+	public List<ServerLoad> listMinLoadServersForMigration(Long oldServerId){		
+		return getSession().createQuery("From "+ServerLoad.class.getName()+" sl where sl.requestCount=(select min(slinnr.requestCount) FROM "+ServerLoad.class.getName()+" slinnr where slinnr.server.status=:status) AND sl.server.id!=:serverId")
+				.setParameter("status", ServerStatus.ACTIVE)
+				.setParameter("serverId", oldServerId).list();
 	}
 	
 	public ServerLoad findServerLoadByServer(Server server) {
@@ -40,11 +61,12 @@ public class Repository {
 				.createQuery(
 						"FROM " + ServerLoad.class.getName()
 								+ " sl where sl.server=:server")
-				.setParameter("server", ServerStatus.ACTIVE).uniqueResult();
+				.setParameter("server", server).uniqueResult();
 	}
 	
 	public Server findServerById(Long id){
-		return (Server) getSession().createQuery("From "+Server.class.getName()).uniqueResult();
-	}
+		return (Server) getSession().createQuery("From "+Server.class.getName()+" s where s.id=:id")
+				.setParameter("id", id).uniqueResult();
+	}	
 
 }

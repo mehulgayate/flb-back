@@ -76,5 +76,8 @@
 	<bean id="repository"
 		class="com.flb.entity.support.Repository">
 		<property name="sessionFactory" ref="sessionFactory" />		
+		<property name="requestTime">
+		    <value>${app.requestDelay}</value>
+		</property>
 	</bean>
 </beans>
