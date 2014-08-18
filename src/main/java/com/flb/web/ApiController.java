@@ -42,7 +42,7 @@ public class ApiController {
 		ServerLoad  serverLoad =repository.findServerLoadByServer(server);
 
 		JSONObject jsonObject=new JSONObject();
-		if(server.getRequestCapacity()+server.getCapacityThreshold()<serverLoad.getRequestCount()){
+		if(server.getRequestCapacity()-server.getCapacityThreshold()<serverLoad.getRequestCount()){
 			System.out.println("**** #### ***** Server overloaded.......");
 			System.out.println("**** #### ***** **** #### ***** Migrating Load.......");
 			jsonObject.put("result", "false");
