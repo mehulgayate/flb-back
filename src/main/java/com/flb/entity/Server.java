@@ -6,18 +6,34 @@ import com.evalua.entity.support.EntityBase;
 
 @Entity
 public class Server extends EntityBase{
-	
+
 	public enum ServerStatus{
 		ACTIVE,SUSPENDED,INACTIVE;
 	}
-	
+
 	private String ip;
 	private String portNumber;
 	private String name;
 	private ServerStatus status;
 	private Integer requestCapacity;
-	private Integer capacityThreshold;	
-	
+	private Integer capacityThreshold;
+	private boolean migrationActive;	
+	private Integer requestMigrated=0;	
+
+	public Integer getRequestMigrated() {
+		return requestMigrated;
+	}
+	public void setRequestMigrated(Integer requestMigrated) {
+		this.requestMigrated = requestMigrated;
+	}
+
+	public boolean isMigrationActive() {
+		return migrationActive;
+	}
+	public void setMigrationActive(boolean migrationActive) {
+		this.migrationActive = migrationActive;
+	}
+
 	public Integer getRequestCapacity() {
 		return requestCapacity;
 	}
@@ -54,8 +70,8 @@ public class Server extends EntityBase{
 	public void setName(String name) {
 		this.name = name;
 	}
-	
-	
-	
+
+
+
 
 }
