@@ -30,7 +30,7 @@ public class ApiController {
 
 	@Resource
 	private Repository repository;
-	
+
 	@Resource
 	private DataStoreManager dataStoreManager;
 
@@ -47,8 +47,8 @@ public class ApiController {
 		ServerLoad  serverLoad =repository.findServerLoadByServer(server);
 
 		JSONObject jsonObject=new JSONObject();
-		if(server.isMigrationActive()){			
-			if(server.getRequestCapacity()+server.getCapacityThreshold()<serverLoad.getRequestCount()){
+		if(server.isMigrationActive()){
+			if(server.getRequestCapacity()-server.getCapacityThreshold()<serverLoad.getRequestCount()){
 				System.out.println("**** #### ***** Server overloaded.......");
 				System.out.println("**** #### ***** **** #### ***** Migrating Load.......");
 				jsonObject.put("result", "false");
@@ -56,8 +56,8 @@ public class ApiController {
 				mv.addObject("result", jsonObject);
 				callNotify(id,uuidf);
 				System.out.println("**** #### ***** **** #### ***** **** #### ***** Load Migrated from this server side.......");
-				
 				return mv;
+
 			}
 		}
 
